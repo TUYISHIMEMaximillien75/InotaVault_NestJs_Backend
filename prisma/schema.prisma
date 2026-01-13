@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  songs     Song[]
+  createdAt DateTime @default(now())
+}
+
+model Song {
+  id            String   @id @default(uuid())
+  title         String
+  artist        String
+  usage         String
+  description   String?
+  sheetPdfUrl   String
+  audioUrl      String?
+  videoUrl      String?
+  externalLink  String?
+  viewCount     Int      @default(0)
+
+  createdBy     User     @relation(fields: [createdById], references: [id])
+  createdById   String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
